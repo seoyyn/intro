@@ -3,102 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="나의 소개 페이지">
-    <meta name="author" content="본인의 이름">
-    <title>나의 소개</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>날씨 및 미세먼지 정보 조회</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
             padding: 0;
-        }
-        header {
-            background-color: #4CAF50;
-            color: white;
-            text-align: center;
-            padding: 20px;
-        }
-        header h1 {
-            margin: 0;
-        }
-        .container {
-            width: 80%;
-            margin: 20px auto;
-        }
-        .about-me {
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .about-me img {
-            border-radius: 50%;
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-        }
-        .about-me h2 {
-            margin-top: 20px;
-            font-size: 24px;
+            height: 100vh;
             color: #333;
         }
-        .about-me p {
+        .weather-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 24px;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        input {
+            width: 80%;
+            padding: 10px;
             font-size: 16px;
-            color: #666;
-            text-align: center;
-            line-height: 1.6;
-            margin-top: 10px;
-            max-width: 600px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
         }
-        .video-container {
-            width: 100%;
-            max-width: 800px;
-            margin: 30px auto;
-            text-align: center;
-        }
-        footer {
-            text-align: center;
+        button {
+            width: 85%;
             padding: 10px;
             background-color: #4CAF50;
             color: white;
-            position: fixed;
-            width: 100%;
-            bottom: 0;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .weather-info, .air-quality-info {
+            margin-top: 20px;
+            display: none;
+            text-align: left;
+            font-size: 18px;
+        }
+        .error-message {
+            color: red;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .weather-info p, .air-quality-info p {
+            margin: 5px 0;
+        }
+        .red-text {
+            color: red;
+        }
+        .blue-text {
+            color: blue;
+        }
+        #weather-icon {
+            width: 50px;
+            height: 50px;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>나의 소개</h1>
-    </header>
+    <div class="weather-container">
+        <h1>날씨 및 미세먼지 정보 검색</h1>
+        <input type="text" id="city" placeholder="도시명을 입력하세요" />
+        <button onclick="getWeather()">날씨 및 미세먼지 조회</button>
 
-    <div class="container">
-        <div class="about-me">
-            <img src="profile.jpg" alt="나의 사진">
-            <h2>안녕하세요! 저는 최서윤입니다.</h2>
-            <p>
-                저는 웹 개발과 디자인에 관심이 많은 사람입니다. 다양한 기술을 배우며 프로젝트를 진행하고 있으며, 
-                특히 프론트엔드 개발에 열정을 가지고 있습니다. 제 취미는 독서와 여행이며, 새로운 것을 배우는 데 
-                항상 도전하고 있습니다. 제 소개를 읽어주셔서 감사합니다.
-            </p>
+        <div id="error-message" class="error-message" style="display: none;"></div>
+
+        <div class="weather-info" id="weather-info">
+            <h2 id="city-name"></h2>
+            <img id="weather-icon" src="" alt="날씨 아이콘" />
+            <p id="weather-description"></p>
+            <p id="temperature"></p>
+            <p id="feels-like"></p>  <!-- 체감 온도 추가 -->
+            <p id="high-low-temp"></p> <!-- 최고/최저 기온 추가 -->
+            <p id="humidity"></p>
+            <p id="windspeed"></p>
+            <p id="precipitation"></p>
         </div>
 
-        <!-- 유튜브 영상 삽입 -->
-        <div class="video-container">
-            <h3>나의 유튜브 영상</h3>
-            <iframe width="100%" height="450" src="https://www.youtube.com/embed/4Qry1Osot08" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <div class="air-quality-info" id="air-quality-info">
+            <h2>미세먼지 정보</h2>
+            <p id="pm10"></p>
+            <p id="pm2_5"></p>
         </div>
     </div>
 
-    <footer>
-        <p>&copy; 2025 [이름]. 모든 권리 보유.</p>
-    </footer>
+    <script>
+        const apiKey = '24109ddecb29a5405afe2a8df42c5e34';
+
+        function getWeather() {
+            const city = document.getElementById("city").value.trim();
+            const errorMessage = document.getElementById("error-message");
+            const weatherInfo = document.getElementById("weather-info");
+            const airQualityInfo = document.getElementById("air-quality-info");
+
+            errorMessage.style.display = "none";
+            weatherInfo.style.display = "none";
+            airQualityInfo.style.display = "none";
+
+            if (city === "") {
+                errorMessage.textContent = "도시명을 입력해 주세요!";
+                errorMessage.style.display = "block";
+                return;
+            }
+
+            const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=kr`;
+
+            fetch(weatherApiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.cod === "404") {
+                        errorMessage.textContent = "도시를 찾을 수 없습니다.";
+                        errorMessage.style.display = "block";
+                    } else {
+                        displayWeather(data);
+
+                        const lat = data.coord.lat;
+                        const lon = data.coord.lon;
+
+                        getAirQuality(lat, lon);
+                    }
+                })
+                .catch(error => {
+                    console.error("오류 발생:", error);
+                    errorMessage.textContent = "날씨 정보를 가져오는 데 실패했습니다.";
+                    errorMessage.style.display = "block";
+                });
+        }
+
+        function displayWeather(data) {
+            const cityName = data.name;
+            const weatherDescription = data.weather[0].description;
+            const temperature = `${data.main.temp} °C`;
+            const feelsLike = `체감 온도: ${data.main.feels_like} °C`;  // 체감 온도 추가
+            const highLowTemp = `최고/최저 기온: ${data.main.temp_max} °C / ${data.main.temp_min} °C`; // 최고/최저 기온 추가
+            const humidity = `습도: ${data.main.humidity}%`;
+            const windSpeed = `풍속: ${data.wind.speed} m/s`;
+            const precipitation = data.rain ? `강수량: ${data.rain['1h']} mm` : '강수량: 없음';
+            const weatherIcon = `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`;  // 날씨 아이콘 추가
+
+            // 날씨 정보 업데이트
+            document.getElementById("city-name").textContent = `${cityName}의 날씨`;
+            document.getElementById("weather-description").textContent = `상태: ${weatherDescription}`;
+            document.getElementById("temperature").textContent = `온도: ${temperature}`;
+            document.getElementById("feels-like").textContent = feelsLike;
+            document.getElementById("high-low-temp").textContent = highLowTemp;
+            document.getElementById("humidity").textContent = humidity;
+            document.getElementById("windspeed").textContent = windSpeed;
+            document.getElementById("precipitation").textContent = precipitation;
+
+            document.getElementById("weather-icon").src = weatherIcon;  // 아이콘 업데이트
+
+            document.getElementById("temperature").classList.add("blue-text");
+            document.getElementById("precipitation").classList.add("red-text");
+
+            // 날씨 정보 표시 영역 보여주기
+            document.getElementById("weather-info").style.display = "block";
+        }
+
+        function getAirQuality(lat, lon) {
+            const airQualityApiUrl = `https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+
+            fetch(airQualityApiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const pm10 = `미세먼지(PM10): ${data.list[0].components.pm10} µg/m³`;
+                    const pm2_5 = `초미세먼지(PM2.5): ${data.list[0].components.pm2_5} µg/m³`;
+
+                    document.getElementById("pm10").textContent = pm10;
+                    document.getElementById("pm2_5").textContent = pm2_5;
+
+                    document.getElementById("air-quality-info").style.display = "block";
+                })
+                .catch(error => {
+                    console.error("미세먼지 정보 오류:", error);
+                    document.getElementById("error-message").textContent = "미세먼지 정보를 가져오는 데 실패했습니다.";
+                    document.getElementById("error-message").style.display = "block";
+                });
+        }
+    </script>
 
 </body>
 </html>
