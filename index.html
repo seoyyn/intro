@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="나의 소개 페이지">
+    <meta name="author" content="본인의 이름">
+    <title>나의 소개</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        header h1 {
+            margin: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+        }
+        .about-me {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .about-me img {
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+        }
+        .about-me h2 {
+            margin-top: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+        .about-me p {
+            font-size: 16px;
+            color: #666;
+            text-align: center;
+            line-height: 1.6;
+            margin-top: 10px;
+            max-width: 600px;
+        }
+        .video-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 30px auto;
+            text-align: center;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>나의 소개</h1>
+    </header>
+
+    <div class="container">
+        <div class="about-me">
+            <img src="profile.jpg" alt="나의 사진">
+            <h2>안녕하세요! 저는 최서윤입니다.</h2>
+            <p>
+                저는 웹 개발과 디자인에 관심이 많은 사람입니다. 다양한 기술을 배우며 프로젝트를 진행하고 있으며, 
+                특히 프론트엔드 개발에 열정을 가지고 있습니다. 제 취미는 독서와 여행이며, 새로운 것을 배우는 데 
+                항상 도전하고 있습니다. 제 소개를 읽어주셔서 감사합니다.
+            </p>
+        </div>
+
+        <!-- 유튜브 영상 삽입 -->
+        <div class="video-container">
+            <h3>나의 유튜브 영상</h3>
+            <iframe width="100%" height="450" src="https://www.youtube.com/embed/4Qry1Osot08" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 [이름]. 모든 권리 보유.</p>
+    </footer>
+
+</body>
+</html>
